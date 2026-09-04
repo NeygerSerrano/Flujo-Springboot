@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout :: head('Panel de Control - Tienda Parking')}"></head>
+<body class="bg-light">
+
+    <!-- Inyectamos el Navbar desde el layout -->
+    <div th:replace="~{layout :: navbar}"></div>
+
+    <div class="container py-4">
+        <!-- Encabezado de bienvenida -->
+        <div class="row mb-5 text-center">
+            <div class="col-lg-8 mx-auto">
+                <h1 class="display-5 fw-bold text-dark mb-3">Panel de Administración</h1>
+                <p class="lead text-muted">Seleccione un módulo para gestionar los registros del sistema.</p>
+            </div>
+        </div>
+
+        <!-- Cuadrícula de Módulos -->
+        <div class="row g-4">
+            
+            <!-- Módulo Carros -->
+            <div class="col-md-6 col-lg-3">
+                <div class="card h-100 shadow-sm border-0">
+                    <div class="card-body text-center p-4">
+                        <h4 class="card-title fw-bold text-primary mb-3">Carros</h4>
+                        <p class="card-text text-muted mb-4">Gestión del inventario de vehículos, placas y marcas.</p>
+                        <a th:href="@{/carros}" class="btn btn-outline-primary w-100 fw-bold">Ingresar</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Módulo Choferes -->
+            <div class="col-md-6 col-lg-3">
+                <div class="card h-100 shadow-sm border-0">
+                    <div class="card-body text-center p-4">
+                        <h4 class="card-title fw-bold text-success mb-3">Choferes</h4>
+                        <p class="card-text text-muted mb-4">Registro de personal, licencias e identificación.</p>
+                        <a th:href="@{/choferes}" class="btn btn-outline-success w-100 fw-bold">Ingresar</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Módulo Motores -->
+            <div class="col-md-6 col-lg-3">
+                <div class="card h-100 shadow-sm border-0">
+                    <div class="card-body text-center p-4">
+                        <h4 class="card-title fw-bold text-danger mb-3">Motores</h4>
+                        <p class="card-text text-muted mb-4">Control de series, especificaciones y rendimiento.</p>
+                        <a th:href="@{/motores}" class="btn btn-outline-danger w-100 fw-bold">Ingresar</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Módulo Pasajeros -->
+            <div class="col-md-6 col-lg-3">
+                <div class="card h-100 shadow-sm border-0">
+                    <div class="card-body text-center p-4">
+                        <h4 class="card-title fw-bold text-warning mb-3">Pasajeros</h4>
+                        <p class="card-text text-muted mb-4">Administración de usuarios y clientes del servicio.</p>
+                        <a th:href="@{/pasajeros}" class="btn btn-outline-warning w-100 fw-bold">Ingresar</a>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Inyectamos los scripts de Bootstrap desde el layout -->
+    <div th:replace="~{layout :: scripts}"></div>
+</body>
+</html>
