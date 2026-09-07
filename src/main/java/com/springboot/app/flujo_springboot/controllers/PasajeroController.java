@@ -10,6 +10,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
+// Importaciones vitales para el manejo de errores y alertas
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.dao.DataIntegrityViolationException;
+
 @Controller
 public class PasajeroController {
 
@@ -24,8 +28,17 @@ public class PasajeroController {
     }
 
     @PostMapping("/pasajeros/guardar")
-    public String guardarPasajero(@ModelAttribute Pasajero pasajero) {
-        pasajeroRepository.save(pasajero);
+    public String guardarPasajero(@ModelAttribute Pasajero pasajero, RedirectAttributes redirectAttrs) {
+        try {
+            // Intentamos guardar en la base de datos
+            pasajeroRepository.save(pasajero);
+            redirectAttrs.addFlashAttribute("mensajeExito", "Pasajero guardado exitosamente.");
+            
+        } catch (DataIntegrityViolationException e) {
+            // Atrapamos el error si se intenta registrar una cédula duplicada
+            redirectAttrs.addFlashAttribute("mensajeError", "Error: La cédula ingresada ya se encuentra registrada en el sistema.");
+        }
+        
         return "redirect:/pasajeros";
     }
 
@@ -38,8 +51,9 @@ public class PasajeroController {
     }
 
     @GetMapping("/pasajeros/eliminar/{id}")
-    public String eliminarPasajero(@PathVariable Long id) {
+    public String eliminarPasajero(@PathVariable Long id, RedirectAttributes redirectAttrs) {
         pasajeroRepository.deleteById(id);
+        redirectAttrs.addFlashAttribute("mensajeExito", "Pasajero eliminado correctamente.");
         return "redirect:/pasajeros";
     }
 }

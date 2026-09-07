@@ -10,6 +10,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
+// Importaciones vitales para el manejo de errores y alertas
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.dao.DataIntegrityViolationException;
+
 @Controller
 public class ChoferController {
 
@@ -24,11 +28,19 @@ public class ChoferController {
         return "choferes"; 
     }
 
-    // CREAR / ACTUALIZAR: Guarda los datos en la base de datos
+    // CREAR / ACTUALIZAR: Guarda los datos y maneja el error de cédula duplicada
     @PostMapping("/choferes/guardar")
-    public String guardarChofer(@ModelAttribute Chofer chofer) {
-        // Si el chofer no tiene ID, JPA hace un INSERT. Si ya tiene ID, hace un UPDATE.
-        choferRepository.save(chofer);
+    public String guardarChofer(@ModelAttribute Chofer chofer, RedirectAttributes redirectAttrs) {
+        try {
+            // Intentamos guardar en la base de datos
+            choferRepository.save(chofer);
+            redirectAttrs.addFlashAttribute("mensajeExito", "Registro guardado exitosamente.");
+            
+        } catch (DataIntegrityViolationException e) {
+            // Si la base de datos rechaza el registro (ej. cédula repetida), atrapamos el error aquí
+            redirectAttrs.addFlashAttribute("mensajeError", "Error: La cédula ingresada ya se encuentra registrada en el sistema.");
+        }
+        
         return "redirect:/choferes";
     }
 
@@ -36,15 +48,16 @@ public class ChoferController {
     @GetMapping("/choferes/editar/{id}")
     public String editarChofer(@PathVariable Long id, Model model) {
         Chofer choferEncontrado = choferRepository.findById(id).orElse(null);
-        model.addAttribute("chofer", choferEncontrado); // Enviamos el chofer lleno al formulario
-        model.addAttribute("listaChoferes", choferRepository.findAll()); // Mantenemos la tabla visible
-        return "choferes"; // Reutilizamos la misma vista
+        model.addAttribute("chofer", choferEncontrado); 
+        model.addAttribute("listaChoferes", choferRepository.findAll()); 
+        return "choferes"; 
     }
 
-    // ELIMINAR: Borra un registro por su ID
+    // ELIMINAR: Borra un registro por su ID y envía alerta de éxito
     @GetMapping("/choferes/eliminar/{id}")
-    public String eliminarChofer(@PathVariable Long id) {
+    public String eliminarChofer(@PathVariable Long id, RedirectAttributes redirectAttrs) {
         choferRepository.deleteById(id);
+        redirectAttrs.addFlashAttribute("mensajeExito", "Registro eliminado correctamente.");
         return "redirect:/choferes";
     }
 }

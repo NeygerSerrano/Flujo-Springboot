@@ -10,6 +10,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
+// Importaciones vitales para el manejo de errores y alertas
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.dao.DataIntegrityViolationException;
+
 @Controller
 public class MotorController {
 
@@ -24,8 +28,17 @@ public class MotorController {
     }
 
     @PostMapping("/motores/guardar")
-    public String guardarMotor(@ModelAttribute Motor motor) {
-        motorRepository.save(motor);
+    public String guardarMotor(@ModelAttribute Motor motor, RedirectAttributes redirectAttrs) {
+        try {
+            // Intentamos guardar en la base de datos
+            motorRepository.save(motor);
+            redirectAttrs.addFlashAttribute("mensajeExito", "Motor guardado exitosamente.");
+            
+        } catch (DataIntegrityViolationException e) {
+            // Atrapamos el error si se intenta registrar un número de serie duplicado
+            redirectAttrs.addFlashAttribute("mensajeError", "Error: El número de serie ingresado ya se encuentra registrado en el sistema.");
+        }
+        
         return "redirect:/motores";
     }
 
@@ -38,8 +51,9 @@ public class MotorController {
     }
 
     @GetMapping("/motores/eliminar/{id}")
-    public String eliminarMotor(@PathVariable Long id) {
+    public String eliminarMotor(@PathVariable Long id, RedirectAttributes redirectAttrs) {
         motorRepository.deleteById(id);
+        redirectAttrs.addFlashAttribute("mensajeExito", "Motor eliminado correctamente.");
         return "redirect:/motores";
     }
 }

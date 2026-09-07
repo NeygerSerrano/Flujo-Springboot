@@ -10,6 +10,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
+// Importaciones vitales para el manejo de errores y alertas
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.dao.DataIntegrityViolationException;
+
 @Controller
 public class CarroController {
 
@@ -24,12 +28,21 @@ public class CarroController {
     }
 
     @PostMapping("/carros/guardar")
-    public String guardarCarro(@ModelAttribute Carro carro) {
-        carroRepository.save(carro);
+    public String guardarCarro(@ModelAttribute Carro carro, RedirectAttributes redirectAttrs) {
+        try {
+            // Intentamos guardar en la base de datos
+            carroRepository.save(carro);
+            redirectAttrs.addFlashAttribute("mensajeExito", "Vehículo guardado exitosamente.");
+            
+        } catch (DataIntegrityViolationException e) {
+            // Atrapamos el error si se intenta registrar una placa duplicada
+            redirectAttrs.addFlashAttribute("mensajeError", "Error: La placa ingresada ya se encuentra registrada en el sistema.");
+        }
+        
         return "redirect:/carros"; 
     }
 
-    // NUEVO: Método para cargar los datos en el formulario y editar
+    // Método para cargar los datos en el formulario y editar
     @GetMapping("/carros/editar/{id}")
     public String editarCarro(@PathVariable Long id, Model model) {
         Carro carroEncontrado = carroRepository.findById(id).orElse(null);
@@ -38,10 +51,11 @@ public class CarroController {
         return "carros";
     }
 
-    // NUEVO: Método para eliminar un carro
+    // Método para eliminar un carro y enviar alerta de éxito
     @GetMapping("/carros/eliminar/{id}")
-    public String eliminarCarro(@PathVariable Long id) {
+    public String eliminarCarro(@PathVariable Long id, RedirectAttributes redirectAttrs) {
         carroRepository.deleteById(id);
+        redirectAttrs.addFlashAttribute("mensajeExito", "Vehículo eliminado correctamente.");
         return "redirect:/carros";
     }
 }

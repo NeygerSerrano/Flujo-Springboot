@@ -9,5 +9,4 @@ import org.springframework.stereotype.Repository;
 public interface CarroRepository extends JpaRepository<Carro, Long> {
     // Al heredar de JpaRepository, Spring Boot nos regala automáticamente
     // todos los métodos para guardar, listar, buscar y eliminar.
-    // ¡No hay que escribir ni una sola consulta SQL!
-}
+}   

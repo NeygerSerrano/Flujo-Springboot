@@ -6,6 +6,19 @@
     <div th:replace="~{layout :: navbar}"></div>
 
     <div class="container py-4">
+        
+        <!-- INICIO DE ZONA DE ALERTAS (Reaccionará a los mensajes del Controlador) -->
+        <div th:if="${mensajeError}" class="alert alert-danger alert-dismissible fade show shadow-sm" role="alert">
+            <strong th:text="${mensajeError}"></strong>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+        </div>
+
+        <div th:if="${mensajeExito}" class="alert alert-success alert-dismissible fade show shadow-sm" role="alert">
+            <strong th:text="${mensajeExito}"></strong>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+        </div>
+        <!-- FIN DE ZONA DE ALERTAS -->
+
         <div class="row">
             <!-- Formulario Pasajero -->
             <div class="col-md-4 mb-4">
